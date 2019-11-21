@@ -3,6 +3,7 @@ package fr.diginamic.recensement;
 import java.util.Scanner;
 
 import fr.diginamic.recensement.entites.Recensement;
+import fr.diginamic.recensement.exceptions.BornePopulationLettreException;
 import fr.diginamic.recensement.services.RecherchePopulationBorneService;
 import fr.diginamic.recensement.services.RecherchePopulationDepartementService;
 import fr.diginamic.recensement.services.RecherchePopulationRegionService;
@@ -24,8 +25,9 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		Recensement recensement = RecensementUtils.lire("C:/Temp/recensement.csv");
-
+		String filePath = ClassLoader.getSystemClassLoader().getResource("recensement.csv").getFile();
+		System.out.println(filePath);
+		Recensement recensement = RecensementUtils.lire(filePath);
 		if (recensement == null) {
 			System.out.println("L'application doit s'arrétée en raison d'une erreur d'exécution.");
 			System.exit(0);
@@ -59,8 +61,14 @@ public class Application {
 				rechercheRegion.traiter(recensement, scanner);
 				break;
 			case 4:
+				try {
 				RecherchePopulationBorneService recherchePopBorne = new RecherchePopulationBorneService();
-				recherchePopBorne.traiter(recensement, scanner);
+				
+					recherchePopBorne.traiter(recensement, scanner);
+				} catch (BornePopulationLettreException e) {
+					
+					System.out.println(e.getMessage());
+				}
 				break;
 			}
 		} while (choix != 99);
